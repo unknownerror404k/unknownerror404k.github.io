@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Akshay Kumar Basre — Portfolio</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Courier New', monospace;
+      background: #0d1117;
+      color: #c9d1d9;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+
+    /* terminal-style header */
+    .terminal {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    .terminal-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .red { background: #ff5f56; }
+    .yellow { background: #ffbd2e; }
+    .green { background: #27c93f; }
+
+    .prompt { color: #58a6ff; }
+    .prompt .user { color: #7ee787; }
+    .cursor { animation: blink 1s infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    h1 {
+      color: #58a6ff;
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+    .tagline { color: #7ee787; margin-bottom: 10px; }
+    .role { color: #8b949e; font-size: 1.1rem; }
+
+    /* section styling */
+    section {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 25px;
+      margin-bottom: 25px;
+    }
+    h2 {
+      color: #f0883e;
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #30363d;
+      padding-bottom: 8px;
+    }
+    p { color: #c9d1d9; margin-bottom: 10px; }
+
+    /* skill chips */
+    .skills { display: flex; flex-wrap: wrap; gap: 10px; }
+    .chip {
+      background: #21262d;
+      border: 1px solid #30363d;
+      color: #79c0ff;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+    }
+
+    /* project cards */
+    .project {
+      background: #21262d;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 18px;
+      margin-bottom: 15px;
+    }
+    .project h3 { color: #58a6ff; margin-bottom: 6px; }
+    .project p { color: #8b949e; font-size: 0.95rem; }
+
+    /* contact links */
+    .links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; }
+    .links a {
+      background: #238636;
+      color: #fff;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      transition: background 0.2s;
+    }
+    .links a:hover { background: #2ea043; }
+    .links a.secondary {
+      background: #21262d;
+      border: 1px solid #30363d;
+    }
+    .links a.secondary:hover { background: #30363d; }
+
+    footer {
+      text-align: center;
+      color: #484f58;
+      font-size: 0.85rem;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.5rem; }
+      .container { padding: 20px 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <div class="terminal">
+      <div class="terminal-bar">
+        <span class="dot red"></span>
+        <span class="dot yellow"></span>
+        <span class="dot green"></span>
+      </div>
+      <div class="prompt">
+        <span class="user">akshay@portfolio</span>:<span style="color:#58a6ff">~</span>$ whoami<span class="cursor">▋</span>
+      </div>
+      <br>
+      <h1>AKSHAY KUMAR BASRE</h1>
+      <p class="tagline">> Aspiring Cyber Security Professional</p>
+      <p class="role">Student · Learning the art of securing systems</p>
+    </div>
+
+    <!-- About -->
+    <section>
+      <h2>// About Me</h2>
+      <p>
+        Hi, I'm Akshay — a student with a deep interest in cyber security.
+        I'm currently learning how networks, systems, and applications work so
+        I can understand how to protect them. My goal is to become a cyber
+        security professional and help defend organizations from digital threats.
+      </p>
+    </section>
+
+    <!-- Skills -->
+    <section>
+      <h2>// Currently Learning</h2>
+      <div class="skills">
+        <span class="chip">Networking Fundamentals</span>
+        <span class="chip">Linux</span>
+        <span class="chip">Python</span>
+        <span class="chip">Web Security</span>
+        <span class="chip">Cryptography</span>
+        <span class="chip">CTF Challenges</span>
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section>
+      <h2>// Projects</h2>
+
+      <div class="project">
+        <h3>🔒 Coming Soon</h3>
+        <p>My cyber security projects will appear here as I build them. Follow my GitHub to stay updated!</p>
+      </div>
+      <div class="project">
+        <h3>📚 Learning Journey</h3>
+        <p>Currently working through networking basics, Linux administration, and beginner CTF challenges. Documenting progress along the way.</p>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section>
+      <h2>// Contact & Links</h2>
+      <p>Want to connect or follow my progress? Reach me here:</p>
+      <div class="links">
+        <a href="https://github.com/unknownerror404k" target="_blank">GitHub</a>
+        <a href="https://www.linkedin.com/in/akshay-kumar-basre-7177b4358" target="_blank" class="secondary">LinkedIn</a>
+        <a href="mailto:unknownerror404k@gmail.com" class="secondary">Email</a>
+      </div>
+    </section>
+
+    <footer>
+      &copy; 2026 Akshay Kumar Basre · Built with curiosity and GitHub Pages
+    </footer>
+
+  </div>
+</body>
+</html>
