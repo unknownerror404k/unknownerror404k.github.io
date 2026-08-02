@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Akshay Kumar Basre — Cyber Security Portfolio</title>
+  <meta name="description" content="Aspiring Cyber Security Professional">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Courier New', monospace;
+      background: #050507;
+      color: #e0e0e0;
+      line-height: 1.7;
+      min-height: 100vh;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ===== CUSTOM CURSOR ===== */
+    .cursor-dot {
+      position: fixed;
+      width: 8px; height: 8px;
+      background: #ff0080;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.1s ease;
+      mix-blend-mode: screen;
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 36px; height: 36px;
+      border: 1.5px solid #00ff9f;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transition: transform 0.15s ease, width 0.3s, height 0.3s, border-color 0.3s;
+      mix-blend-mode: screen;
+    }
+
+    /* ===== MATRIX CANVAS BG ===== */
+    #matrix-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      opacity: 0.12;
+      pointer-events: none;
+    }
+
+    /* ===== GLOW ORBS ===== */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .orb-1 { width: 400px; height: 400px; background: rgba(255, 0, 128, 0.15); top: -100px; left: -100px; animation: orbFloat1 20s ease-in-out infinite; }
+    .orb-2 { width: 350px; height: 350px; background: rgba(128, 0, 255, 0.12); bottom: 10%; right: -80px; animation: orbFloat2 25s ease-in-out infinite; }
+    .orb-3 { width: 300px; height: 300px; background: rgba(0, 255, 159, 0.08); top: 50%; left: 30%; animation: orbFloat3 30s ease-in-out infinite; }
+
+    @keyframes orbFloat1 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(60px, 80px); } }
+    @keyframes orbFloat2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-50px, -60px); } }
+    @keyframes orbFloat3 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(40px, -40px); } }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 60px 28px 40px;
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes blink { 0%,49% { opacity: 1; } 50%,100% { opacity: 0; } }
+    @keyframes glowPulse {
+      0%,100% { box-shadow: 0 0 20px rgba(255,0,128,0.2), inset 0 0 30px rgba(255,0,128,0.03); }
+      50% { box-shadow: 0 0 50px rgba(255,0,128,0.4), 0 0 100px rgba(255,0,128,0.08), inset 0 0 40px rgba(255,0,128,0.05); }
+    }
+    @keyframes borderFlow {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ===== SCROLL REVEAL ===== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ===== HEADER / TERMINAL ===== */
+    .terminal {
+      position: relative;
+      background: linear-gradient(135deg, rgba(26,26,46,0.9) 0%, rgba(16,16,36,0.9) 100%);
+      border-radius: 6px;
+      padding: 40px 36px;
+      margin-bottom: 44px;
+      animation: glowPulse 5s ease-in-out infinite;
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+    .terminal::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, #ff0080, #ffeb3b, #27c93f, #03a9f4, #bb86fc, #ff0080);
+      background-size: 200% 100%;
+      animation: borderFlow 4s linear infinite;
+    }
+    .terminal::after {
+      content: '';
+      position: absolute;
+      top: 3px; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,0,128,0.5), transparent);
+    }
+    .terminal-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 24px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .terminal-bar .title {
+      margin-left: 12px;
+      font-size: 0.8rem;
+      color: #555;
+      letter-spacing: 1px;
+    }
+    .dot { width: 13px; height: 13px; border-radius: 50%; transition: box-shadow 0.3s; }
+    .red { background: #ff5f56; box-shadow: 0 0 12px rgba(255,95,86,0.7); }
+    .yellow { background: #ffbd2e; box-shadow: 0 0 12px rgba(255,189,46,0.7); }
+    .green { background: #27c93f; box-shadow: 0 0 12px rgba(39,201,63,0.7); }
+
+    .prompt {
+      color: #00ff9f;
+      margin-bottom: 22px;
+      font-size: 0.95rem;
+      min-height: 1.5em;
+    }
+    .prompt .user { color: #ffeb3b; }
+    .prompt .sym { color: #ff0080; }
+    .prompt .path { color: #03a9f4; }
+    .typed-text { border-right: 2px solid #27c93f; padding-right: 2px; }
+    .cursor-blink { animation: blink 1s step-end infinite; color: #27c93f; }
+
+    h1 {
+      font-size: 2.4rem;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+      background: linear-gradient(90deg, #ff0080, #ff5f56, #ffeb3b, #ff0080);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 4s linear infinite;
+      text-shadow: none;
+    }
+    .tagline {
+      color: #00ff9f;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+      text-shadow: 0 0 10px rgba(0,255,159,0.4);
+      animation: float 5s ease-in-out infinite;
+    }
+    .role {
+      color: #ffeb3b;
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+
+    /* ===== SECTION CARDS ===== */
+    section {
+      position: relative;
+      background: rgba(18,18,38,0.6);
+      border-radius: 6px;
+      padding: 36px 34px;
+      margin-bottom: 32px;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.04);
+      overflow: hidden;
+      transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), border-color 0.4s, box-shadow 0.4s;
+    }
+    section::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0; width: 4px;
+      border-radius: 6px 0 0 6px;
+      transition: width 0.3s ease;
+    }
+    section:nth-of-type(1)::before { background: linear-gradient(180deg, #ff5f56, #ff0080); }
+    section:nth-of-type(2)::before { background: linear-gradient(180deg, #ffbd2e, #ff5f56); }
+    section:nth-of-type(3)::before { background: linear-gradient(180deg, #27c93f, #00ff9f); }
+    section:nth-of-type(4)::before { background: linear-gradient(180deg, #00ff9f, #03a9f4, #bb86fc); }
+
+    section:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255,0,128,0.2);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 30px rgba(128,0,255,0.05);
+    }
+    section:hover::before { width: 6px; }
+
+    h2 {
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px dashed rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    h2 .slash { color: #f0883e; }
+    h2 .icon { display: inline-block; animation: float 4s ease-in-out infinite; }
+    p { color: #c8c8e0; margin-bottom: 14px; font-size: 0.98rem; }
+
+    /* ===== SKILL CHIPS ===== */
+    .skills { display: flex; flex-wrap: wrap; gap: 12px; }
+    .chip {
+      background: transparent;
+      border: 1px solid;
+      padding: 9px 20px;
+      border-radius: 3px;
+      font-size: 0.9rem;
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+      cursor: none;
+      overflow: hidden;
+    }
+    .chip::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: currentColor;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: -1;
+    }
+    .chip:nth-child(1) { border-color: #00ff9f; color: #00ff9f; }
+    .chip:nth-child(2) { border-color: #ff0080; color: #ff0080; }
+    .chip:nth-child(3) { border-color: #ffeb3b; color: #ffeb3b; }
+    .chip:nth-child(4) { border-color: #bb86fc; color: #bb86fc; }
+    .chip:nth-child(5) { border-color: #ff5f56; color: #ff5f56; }
+    .chip:nth-child(6) { border-color: #03a9f4; color: #03a9f4; }
+    .chip:hover {
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: 0 8px 25px currentColor;
+    }
+    .chip:hover::before { opacity: 0.15; }
+
+    /* ===== PROJECT CARDS ===== */
+    .projects-grid { display: grid; gap: 18px; }
+    .project {
+      background: rgba(10,10,24,0.7);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 6px;
+      padding: 24px 26px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+    }
+    .project::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 3px; height: 100%;
+      background: #ff0080;
+      transition: width 0.3s;
+    }
+    .project:nth-child(2)::before { background: #00ff9f; }
+    .project::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%; width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+      transition: left 0.6s;
+    }
+    .project:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255,0,128,0.25);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    }
+    .project:nth-child(2):hover { border-color: rgba(0,255,159,0.25); }
+    .project:hover::before { width: 5px; }
+    .project:hover::after { left: 100%; }
+    .project h3 {
+      color: #ffeb3b;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .project h3 .emoji { animation: float 3s ease-in-out infinite; }
+    .project:nth-child(2) h3 .emoji { animation-delay: 1.5s; }
+    .project p { color: #9090a8; font-size: 0.95rem; margin-bottom: 0; }
+
+    /* ===== CONTACT LINKS ===== */
+    .links {
+      display: flex;
+      gap: 0;
+      margin-top: 22px;
+    }
+    .links a {
+      flex: 1;
+      background: transparent;
+      text-decoration: none;
+      padding: 18px 24px;
+      font-size: 0.95rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid;
+      transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+      z-index: 1;
+      cursor: none;
+    }
+    .links a::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: currentColor;
+      transform: scaleY(0);
+      transform-origin: bottom;
+      transition: transform 0.35s cubic-bezier(0.16,1,0.3,1);
+      z-index: -1;
+    }
+    .links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0; height: 0;
+      background: currentColor;
+      opacity: 0.1;
+      transition: height 0.3s;
+      z-index: -1;
+    }
+    .links a:hover::before { transform: scaleY(1); }
+    .links a:hover { color: #050507; font-weight: bold; }
+    .links a:nth-child(1) { border-color: #27c93f; color: #27c93f; }
+    .links a:nth-child(2) { border-color: #03a9f4; color: #03a9f4; border-left: none; }
+    .links a:nth-child(3) { border-color: #ff0080; color: #ff0080; border-left: none; }
+
+    /* ===== FOOTER ===== */
+    footer {
+      text-align: center;
+      color: #454555;
+      font-size: 0.82rem;
+      margin-top: 40px;
+      padding-top: 28px;
+      border-top: 1px dashed rgba(255,255,255,0.06);
+    }
+    footer .heart { color: #ff0080; animation: float 2s ease-in-out infinite; display: inline-block; }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #050507; }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #ff0080, #bb86fc); border-radius: 3px; }
+
+    /* ===== PROGRESS BAR ===== */
+    #progress {
+      position: fixed;
+      top: 0; left: 0; height: 3px;
+      background: linear-gradient(90deg, #ff0080, #ffeb3b, #27c93f, #03a9f4, #bb86fc);
+      z-index: 9997;
+      width: 0%;
+      transition: width 0.1s;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 600px) {
+      body { cursor: auto; }
+      .cursor-dot, .cursor-ring { display: none; }
+      h1 { font-size: 1.7rem; }
+      .container { padding: 36px 14px; }
+      .terminal { padding: 26px 22px; }
+      section { padding: 26px 22px; }
+      .links { flex-direction: column; }
+      .links a:nth-child(2), .links a:nth-child(3) { border-left: 1px solid; }
+      .links a { border-left: 1px solid; }
+      .chip:hover, .project:hover, section:hover { transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="matrix-bg"></canvas>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div id="progress"></div>
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
+
+  <div class="container">
+
+    <!-- Header -->
+    <div class="terminal">
+      <div class="terminal-bar">
+        <span class="dot red"></span>
+        <span class="dot yellow"></span>
+        <span class="dot green"></span>
+        <span class="title">akshay@portfolio — bash</span>
+      </div>
+      <div class="prompt">
+        <span class="user">akshay@portfolio</span><span class="sym">:</span><span class="path">~</span><span class="sym">$</span> <span class="typed-text" id="typed"></span><span class="cursor-blink">▋</span>
+      </div>
+      <h1>AKSHAY KUMAR BASRE</h1>
+      <p class="tagline">▸ Aspiring Cyber Security Professional</p>
+      <p class="role">Student · Learning the art of securing systems</p>
+    </div>
+
+    <!-- About -->
+    <section class="reveal">
+      <h2><span class="slash">//</span> <span class="icon">👤</span> About Me</h2>
+      <p>
+        Hi, I'm Akshay — a student with a deep interest in cyber security.
+        I'm currently learning how networks, systems, and applications work so
+        I can understand how to protect them. My goal is to become a cyber
+        security professional and help defend organizations from digital threats.
+      </p>
+    </section>
+
+    <!-- Skills -->
+    <section class="reveal">
+      <h2><span class="slash">//</span> <span class="icon">⚡</span> Currently Learning</h2>
+      <div class="skills">
+        <span class="chip">Networking Fundamentals</span>
+        <span class="chip">Linux</span>
+        <span class="chip">Python</span>
+        <span class="chip">Web Security</span>
+        <span class="chip">Cryptography</span>
+        <span class="chip">CTF Challenges</span>
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section class="reveal">
+      <h2><span class="slash">//</span> <span class="icon">🛡️</span> Projects</h2>
+      <div class="projects-grid">
+        <div class="project">
+          <h3><span class="emoji">🔒</span> Coming Soon</h3>
+          <p>My cyber security projects will appear here as I build them. Follow my GitHub to stay updated!</p>
+        </div>
+        <div class="project">
+          <h3><span class="emoji">📚</span> Learning Journey</h3>
+          <p>Currently working through networking basics, Linux administration, and beginner CTF challenges. Documenting progress along the way.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="reveal">
+      <h2><span class="slash">//</span> <span class="icon">📡</span> Contact & Links</h2>
+      <p>Want to connect or follow my progress? Reach me here:</p>
+      <div class="links">
+        <a href="https://github.com/unknownerror404k" target="_blank" rel="noopener">▶ GitHub</a>
+        <a href="https://www.linkedin.com/in/akshay-kumar-basre-7177b4358" target="_blank" rel="noopener">▶ LinkedIn</a>
+        <a href="mailto:unknownerror404k@gmail.com">▶ Email</a>
+      </div>
+    </section>
+
+    <footer>
+      &copy; 2026 Akshay Kumar Basre · Built with <span class="heart">❤</span> and GitHub Pages
+    </footer>
+
+  </div>
+
+  <script>
+    // ===== MATRIX RAIN BACKGROUND =====
+    const canvas = document.getElementById('matrix-bg');
+    const ctx = canvas.getContext('2d');
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const chars = '01ABCDEF{}<>/$#@!*+=アカサタナハマヤラワ';
+    const fontSize = 14;
+    const columns = Math.floor(canvas.width / fontSize);
+    const drops = Array(columns).fill(1);
+    const colors = ['#00ff9f', '#ff0080', '#03a9f4', '#bb86fc'];
+
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(5, 5, 7, 0.06)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.font = fontSize + 'px Courier New';
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+    setInterval(drawMatrix, 55);
+
+    // ===== TYPING ANIMATION =====
+    const typedEl = document.getElementById('typed');
+    const phrases = ['whoami', 'nmap -sV target', 'cat /etc/passwd', 'whoami'];
+    let phraseIdx = 0, charIdx = 0, isDeleting = false;
+    function typeLoop() {
+      const phrase = phrases[phraseIdx];
+      if (!isDeleting) {
+        typedEl.textContent = phrase.substring(0, charIdx + 1);
+        charIdx++;
+        if (charIdx === phrase.length) {
+          setTimeout(() => { isDeleting = true; typeLoop(); }, 2200);
+          return;
+        }
+      } else {
+        typedEl.textContent = phrase.substring(0, charIdx - 1);
+        charIdx--;
+        if (charIdx === 0) {
+          isDeleting = false;
+          phraseIdx = (phraseIdx + 1) % phrases.length;
+        }
+      }
+      setTimeout(typeLoop, isDeleting ? 50 : 110);
+    }
+    setTimeout(typeLoop, 800);
+
+    // ===== SCROLL REVEAL =====
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 150);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    reveals.forEach(el => observer.observe(el));
+
+    // ===== CUSTOM CURSOR =====
+    const dot = document.querySelector('.cursor-dot');
+    const ring = document.querySelector('.cursor-ring');
+    let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX; mouseY = e.clientY;
+      dot.style.left = mouseX + 'px';
+      dot.style.top = mouseY + 'px';
+    });
+    function animateRing() {
+      ringX += (mouseX - ringX) * 0.15;
+      ringY += (mouseY - ringY) * 0.15;
+      ring.style.left = (ringX - 18) + 'px';
+      ring.style.top = (ringY - 18) + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+    document.querySelectorAll('a, .chip, .project, section').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        ring.style.width = '50px'; ring.style.height = '50px';
+        ring.style.borderColor = '#ff0080';
+      });
+      el.addEventListener('mouseleave', () => {
+        ring.style.width = '36px'; ring.style.height = '36px';
+        ring.style.borderColor = '#00ff9f';
+      });
+    });
+
+    // ===== SCROLL PROGRESS BAR =====
+    const progress = document.getElementById('progress');
+    window.addEventListener('scroll', () => {
+      const scrollPct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+      progress.style.width = scrollPct + '%';
+    });
+
+    // ===== TILT EFFECT ON TERMINAL =====
+    const terminal = document.querySelector('.terminal');
+    document.addEventListener('mousemove', (e) => {
+      const rect = terminal.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+      const dist = Math.sqrt(x*x + y*y);
+      if (dist < 400) {
+        const rotX = (y / rect.height) * -3;
+        const rotY = (x / rect.width) * 3;
+        terminal.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+      } else {
+        terminal.style.transform = '';
+      }
+    });
+  </script>
+</body>
+</html>
